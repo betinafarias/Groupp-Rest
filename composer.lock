@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "7d8b63da442f8391bd774a4dc70b02f6",
-    "content-hash": "03a70f3e2c9bc97dc7dbb6952b6c983d",
+    "hash": "b19b354623dc9f39eb95408504fb1762",
+    "content-hash": "02489a35667c98687f6160012fb3df99",
     "packages": [
         {
             "name": "fergusean/nusoap",
