@@ -1,5 +1,4 @@
 <?php
-require('utils.php');
 $requesturi = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 $pos = strpos($requesturi, "explorecalifornia");
 
@@ -13,5 +12,15 @@ $excal = mysql_pconnect($hostname_excal, $username_excal, $password_excal) or tr
 header('Content-type: application/json');
 header('Content-Type: text/html; charset=utf-8');
 
-
+function db_query($sql){
+	$query = mysql_query($sql) or die(mysql_error());
+	$i = 0;
+	$list = array();
+	while($dado = mysql_fetch_array($query)) {
+		$list[$i] = $dado;
+		$i++;
+	}
+	
+	return $list;
+}
 ?>

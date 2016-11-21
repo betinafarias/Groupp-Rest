@@ -1,7 +1,7 @@
 <?php 
 
 //get data
-require_once('database_connection.php'); 
+require_once('database/database_connection.php'); 
 mysql_select_db($database_excal, $excal);
 
 //build query
