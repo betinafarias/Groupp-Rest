@@ -1,0 +1,12 @@
+{
+    "name": "betinafarias1/server-groupp",
+    "require": {
+        "fergusean/nusoap": "^0.9.5"
+    },
+    "authors": [
+        {
+            "name": "Betina Farias",
+            "email": "betina.farias@outlook.com"
+        }
+    ]
+}
