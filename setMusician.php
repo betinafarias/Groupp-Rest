@@ -10,7 +10,7 @@ $json_result['error'] = 0;
 
 
 if(validSetUser()) {
-	$email = $_GET['email'];
+	$email = $_POST['email'];
 	$name = $_POST['name'];
 	$password = $_POST['password'];
 	$cityId = $_POST['cityId'];
@@ -39,7 +39,6 @@ if(validSetUser()) {
 			$json_result['error'] = 1;
 		   // echo "Error: " . $sql . "<br>" . mysqli_error($conn);
 		}
-		
 	}
 
 }
@@ -53,7 +52,7 @@ echo json_encode($json_result);
 
 //Validate service parameters
 function validSetUser() {
-	if(empty($_GET['email']) || empty($_POST['name']) || empty($_POST['password']) || empty($_POST['cityId']) || empty($_POST['age'])) {
+	if(empty($_POST['email']) || empty($_POST['name']) || empty($_POST['password']) || empty($_POST['cityId']) || empty($_POST['age'])) {
 
 		return false;
 	}
