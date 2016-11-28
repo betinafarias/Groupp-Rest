@@ -1,0 +1,12 @@
+{
+    "name": "betinafarias1/server-groupp",
+    "authors": [
+        {
+            "name": "Betina Farias",
+            "email": "betina.farias@outlook.com"
+        }
+    ],
+    "require": {
+	"slim/slim": "2.*"
+    }
+}
