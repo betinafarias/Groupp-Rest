@@ -82,7 +82,7 @@ function login() {
 function getInstruments() {
 	$statement = getConn()->query("SELECT * FROM instrument");
 	$states = $statement->fetchAll(PDO::FETCH_OBJ);
-	echo "{instruments:".json_encode($states)."}";
+	echo json_encode($states);
 }
 
 function getStates() {
@@ -102,9 +102,9 @@ function getCities($stateId) {
 }
 
 function getMusicians() {
-	$statement = getConn()->query("SELECT * FROM musician");
+	$statement = getConn()->query("SELECT * FROM musician_full_view");
 	$musicians = $statement->fetchAll(PDO::FETCH_OBJ);
-	echo "{musicians:".json_encode($musicians)."}";
+	echo json_encode($musicians);
 }
 
 function getMusician($id) {
@@ -157,9 +157,18 @@ function addMusician() {
 	$stmt->bindParam("email", $musician->email);
 	$stmt->bindParam("age", $musician->age);
 	$stmt->bindParam("id_city", $musician->id_city);
-
 	$stmt->execute();
 	$musician->id = $conn->lastInsertId();
+
+	foreach ($musician->instruments as $instrument) {
+		$sql = "INSERT INTO musician_instrument (id_musician, id_instrument) values (:id_musician, :id_instrument) ";
+		$conn = getConn();
+		$stmt = $conn->prepare($sql);
+		$stmt->bindParam("id_musician", $musician->id);
+		$stmt->bindParam("id_instrument", $instrument);
+		$stmt->execute();	
+	}
+
 	echo json_encode($musician);
 }
 
