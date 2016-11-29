@@ -55,7 +55,7 @@ function getConn() {
 function login() {
 	$request = \Slim\Slim::getInstance()->request();
 	$musician = json_decode($request->getBody());
-	$sql = "SELECT id FROM musician WHERE email = :email AND password = :password";
+	$sql = "SELECT * FROM musician_full_view WHERE email = :email AND password = :password";
 	$conn = getConn();
 	$stmt = $conn->prepare($sql);
 
@@ -63,11 +63,11 @@ function login() {
 	$stmt->bindParam("password", $musician->password);
 
 	$stmt->execute();
-	$id = $stmt->fetchObject();
+	$loggedUser = $stmt->fetchObject();
 
-	if($id){
+	if($loggedUser->id){
 		$response['error'] = false;
-		$response['id'] = $id->id;
+		$response['user'] = $loggedUser;
 		echo json_encode($response);
 	}
 	else{
