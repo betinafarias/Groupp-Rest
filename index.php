@@ -14,6 +14,7 @@ $app->get('/', function () {
 // -----------------------------------
 // Musician
 // -----------------------------------
+//$app->get('/musiciansCompatibility/:id','getMusiciansCompatibility');
 $app->get('/musicians','getMusicians');
 $app->get('/musicians/:id','getMusician');
 $app->post('/musicians', 'addMusician');
@@ -24,7 +25,7 @@ $app->delete('/musicians/:id','deleteMusician');
 // -----------------------------------
 // Artist
 // -----------------------------------
-$app->post('/artists','addArtist');
+$app->post('/artists/:musicianId','addArtists');
 
 
 // -----------------------------------
@@ -107,6 +108,39 @@ function getCities($stateId) {
 	echo json_encode($cities);
 }
 
+
+function getMusiciansCompatibility ($id) {
+	$statement = getConn()->query("SELECT * FROM musician_full_view");
+	$musicians = $statement->fetchAll(PDO::FETCH_OBJ);
+
+	// foreach ($musicians as $musician) { 
+	// 	$sql = "SELECT 
+	// 				count(*)
+	// 			FROM
+	// 				musician_artist
+	// 			WHERE 
+	// 				musician_artist.id_musician = :id_musician
+	// 			 	AND 
+	// 			    musician_artist.id_artist IN (SELECT
+	// 				id_artist	
+	// 			FROM
+	// 				musician_artist
+	// 			WHERE 
+	// 				musician_artist.id_musician = :id_logged_userd)";
+
+	// 	$stmt = $conn->prepare($sql);
+	// 	$stmt->bindParam("id_musician", $musician->id);
+	// 	$stmt->bindParam("id_logged_userd", $id);
+	// 	$stmt->execute();
+	// 	$count = $stmt->fetch();
+	// 	$compatibility = ($count * 100) / 20 //20 = num total de artistas (100%)
+	// 	$musician->compatibility = $compatibility
+	// }
+	
+	echo json_encode($musicians);
+
+}
+
 function getMusicians() {
 	$statement = getConn()->query("SELECT * FROM musician_full_view");
 	$musicians = $statement->fetchAll(PDO::FETCH_OBJ);
@@ -152,66 +186,70 @@ function saveMusician($id) {
 }
 
 
-function addArtist(){
+function addArtists($musicianId){
 	$request = \Slim\Slim::getInstance()->request();
-	$artist = json_decode($request->getBody());
+	$topArtists = json_decode($request->getBody());
 
-	// 1. Verificar se já está cadastrado, se já estiver, trazer do banco
-	// -------------------------------------------------------------------
-	$sql = "SELECT
-				*
-			FROM
-				artist
-			WHERE 
-				uri = :uri" ;
+	foreach ($topArtists as $artist) {
+		// 1. Verificar se já está cadastrado, se já estiver, trazer do banco
+		// -------------------------------------------------------------------
+		$sql = "SELECT
+					*
+				FROM
+					artist
+				WHERE 
+					uri = :uri" ;
 
-	$conn = getConn();
-	$stmt_artist = $conn->prepare($sql);
-	$stmt_artist->bindParam("uri", $artist->uri);
-	$stmt_artist->execute();
-	$fetchedArtist = $stmt_artist->fetchObject();
-
-	if($fetchedArtist) {
-		$artist->id = $fetchedArtist->id;		
-	}
-	else {
-
-		// 2. Caso não esteja, cadastrar no banco e pegar id criada
-		// ------------------------------------------------------------
-
-		$sql = "INSERT INTO artist (
-					name, 
-					image, 
-					uri ) 
-				values (
-					:name, 
-					:image, 
-					:uri ) ";
 		$conn = getConn();
-		$stmt_insert = $conn->prepare($sql);
+		$stmt_artist = $conn->prepare($sql);
+		$stmt_artist->bindParam("uri", $artist->uri);
+		$stmt_artist->execute();
+		$fetchedArtist = $stmt_artist->fetchObject();
 
-		$stmt_insert->bindParam("name", $artist->name);
-		$stmt_insert->bindParam("image", $artist->images[0]->url);
-		$stmt_insert->bindParam("uri", $artist->uri);
-		$stmt_insert->execute();
-		$artist->id = $conn->lastInsertId();
-		echo json_encode($artist->id);
+		if($fetchedArtist) {
+			$artist->id = $fetchedArtist->id;		
+		}
+		else {
+
+			// 2. Caso não esteja, cadastrar no banco e pegar id criada
+			// ------------------------------------------------------------
+
+			$sql = "INSERT INTO artist (
+						name, 
+						image, 
+						uri ) 
+					values (
+						:name, 
+						:image, 
+						:uri ) ";
+			$conn = getConn();
+			$stmt_insert = $conn->prepare($sql);
+
+			$stmt_insert->bindParam("name", $artist->name);
+			$stmt_insert->bindParam("image", $artist->images[0]->url);
+			$stmt_insert->bindParam("uri", $artist->uri);
+			$stmt_insert->execute();
+			$artist->id = $conn->lastInsertId();
+
+		}
+
+		// 3. Relacionar artista com usuário na tabela musician_artist
+		// ------------------------------------------------------------
+		$sql = "INSERT INTO musician_artist (
+					id_musician, 
+					id_artist ) 
+				values (
+					:id_musician, 
+					:id_artist ) ";
+
+		$conn = getConn();
+		$stm_relac = $conn->prepare($sql);
+		$stm_relac->bindParam("id_musician", $musicianId);
+		$stm_relac->bindParam("id_artist", $artist->id);
+		$stm_relac->execute();
+
 	}
 
-	// 3. Relacionar artista com usuário na tabela musician_artist
-	// ------------------------------------------------------------
-	$sql = "INSERT INTO musician_artist (
-				id_musician, 
-				id_artist ) 
-			values (
-				:id_musician, 
-				:id_artist ) ";
-
-	$conn = getConn();
-	$stm_relac = $conn->prepare($sql);
-	$stm_relac->bindParam("id_musician", $artist->musicianId);
-	$stm_relac->bindParam("id_artist", $artist->id);
-	$stm_relac->execute();
 
 }
 
