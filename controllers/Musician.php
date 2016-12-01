@@ -10,6 +10,45 @@ namespace controllers {
 			echo json_encode($musicians);
 		}
 
+
+
+	public function getCompatibilities ($id) {
+		$conn = getConn();
+		$statement = $conn->query("SELECT * FROM musician_full_view WHERE id <> " . $id);
+		$musicians = $statement->fetchAll(\PDO::FETCH_OBJ);
+
+		 foreach ($musicians as $musician) { 
+		 	$sql = "SELECT 
+		 				count(*) as num_matches
+					FROM
+	 				musician_artist
+		 			WHERE 
+		 				musician_artist.id_musician = :id_musician
+		 			 	AND 
+		 			    musician_artist.id_artist IN (SELECT
+		 				id_artist	
+		 			FROM
+		 				musician_artist
+		 			WHERE 
+		 				musician_artist.id_musician = :id_logged_userd)";
+
+		 	$stmt = $conn->prepare($sql);
+		 	$stmt->bindParam("id_musician", $musician->id);
+		 	$stmt->bindParam("id_logged_userd", $id);
+		 	$stmt->execute();
+		 	$count = $stmt->fetchObject();
+		 	$numberOfMatches = $count->num_matches;
+
+		 	$compatibility = ($numberOfMatches * 100) / 20; //20 = num total de artistas (100%)
+		 	$musician->compatibility = $compatibility;
+		 }
+		
+		echo json_encode($musicians);
+
+	}
+
+
+
 		public function get($id) {
 			$conn = getConn();
 			$sql = "SELECT * FROM musician WHERE id=:id";

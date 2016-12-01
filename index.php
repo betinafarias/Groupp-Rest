@@ -21,6 +21,12 @@ $app->get('/musicians', function() use ($app){
 	(new \controllers\Musician($app))->getAll();
 });
 
+
+//Get all musicians and their compatibility with the logged user
+$app->get('/musicians/:id/compatibilities', function($id) use ($app){
+	(new \controllers\Musician($app))->getCompatibilities($id);
+});
+
 //Get a musician
 $app->get('/musicians/:id', function($id) use ($app){
 	(new \controllers\Musician($app))->get($id);
@@ -45,6 +51,9 @@ $app->delete('/musicians/:id', function($id) use ($app){
 $app->post('/login', function() use ($app){
 	(new \controllers\Musician($app))->login();
 });
+
+
+
 
 
 // -----------------------------------
@@ -85,49 +94,5 @@ $app->get('/instruments', function() use ($app){
 
 
 $app->run();
-
-
-
-
-/*
-
-function getMusiciansCompatibility ($id) {
-	$statement = getConn()->query("SELECT * FROM musician_full_view");
-	$musicians = $statement->fetchAll(PDO::FETCH_OBJ);
-
-	// foreach ($musicians as $musician) { 
-	// 	$sql = "SELECT 
-	// 				count(*)
-	// 			FROM
-	// 				musician_artist
-	// 			WHERE 
-	// 				musician_artist.id_musician = :id_musician
-	// 			 	AND 
-	// 			    musician_artist.id_artist IN (SELECT
-	// 				id_artist	
-	// 			FROM
-	// 				musician_artist
-	// 			WHERE 
-	// 				musician_artist.id_musician = :id_logged_userd)";
-
-	// 	$stmt = $conn->prepare($sql);
-	// 	$stmt->bindParam("id_musician", $musician->id);
-	// 	$stmt->bindParam("id_logged_userd", $id);
-	// 	$stmt->execute();
-	// 	$count = $stmt->fetch();
-	// 	$compatibility = ($count * 100) / 20 //20 = num total de artistas (100%)
-	// 	$musician->compatibility = $compatibility
-	// }
-	
-	echo json_encode($musicians);
-
-}
-
-*/
-
-
-
-
-
 
 
