@@ -22,8 +22,8 @@ $app->get('/musicians', function() use ($app){
 });
 
 //Get a musician
-$app->get('/musicians/:id', function() use ($app){
-	(new \controllers\Musician($app))->get();
+$app->get('/musicians/:id', function($id) use ($app){
+	(new \controllers\Musician($app))->get($id);
 });
 
 //Create musician
@@ -32,13 +32,13 @@ $app->post('/musicians', function() use ($app){
 });
 
 //Update musician
-$app->post('/musicians/:id', function() use ($app){
-	(new \controllers\Musician($app))->save();
+$app->post('/musicians/:id', function($id) use ($app){
+	(new \controllers\Musician($app))->save($id);
 });
 
 //Delete musician
-$app->delete('/musicians/:id', function() use ($app){
-	(new \controllers\Musician($app))->delete();
+$app->delete('/musicians/:id', function($id) use ($app){
+	(new \controllers\Musician($app))->delete($id);
 });
 
 //Login 
@@ -52,8 +52,8 @@ $app->post('/login', function() use ($app){
 // -----------------------------------
 
 //Relates an spotify artist with an musician 
-$app->post('/artists/:musicianId', function() use ($app){
-	(new \controllers\Artist($app))->add();
+$app->post('/artists/:musicianId', function($musicianId) use ($app){
+	(new \controllers\Artist($app))->add($musicianId);
 });
 
 // -----------------------------------
@@ -70,8 +70,8 @@ $app->get('/states', function() use ($app){
 // -----------------------------------
 
 // Get all cities from a state
-$app->get('/cities/:stateId', function() use ($app){
-	(new \controllers\City($app))->getAll();
+$app->get('/cities/:stateId', function($stateId) use ($app){
+	(new \controllers\City($app))->getAllFromState($stateId);
 });
 
 // -----------------------------------
