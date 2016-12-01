@@ -21,8 +21,8 @@ namespace controllers {
 		}		
 
 		public function save($id) {
-			$request = \Slim\Slim::getInstance()->request();
-			$musician = json_decode($request->getBody());
+			global $app;
+			$musician = json_decode($app->request->getBody());	
 			$sql = "UPDATE 
 						musician 
 					SET 
@@ -49,8 +49,8 @@ namespace controllers {
 
 
 		public function add() {
-			$request = \Slim\Slim::getInstance()->request();
-			$musician = json_decode($request->getBody());
+			global $app;
+			$musician = json_decode($app->request->getBody());			
 			$sql = "INSERT INTO musician (name, password, email, age, id_city) values (:name, :password, :email, :age, :id_city) ";
 			$conn = getConn();
 			$stmt = $conn->prepare($sql);
@@ -88,8 +88,8 @@ namespace controllers {
 
 
 		function login() {
-			$request = \Slim\Slim::getInstance()->request();
-			$musician = json_decode($request->getBody());
+			global $app;
+			$musician = json_decode($app->request->getBody());	
 			$sql = "SELECT * FROM musician_full_view WHERE email = :email AND password = :password";
 			$conn = getConn();
 			$stmt = $conn->prepare($sql);
