@@ -7,6 +7,11 @@
         }
     ],
     "require": {
-	"slim/slim": "2.*"
-    }
+	   "slim/slim": "2.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "controllers\\": "controllers"
+        }
+    }    
 }
